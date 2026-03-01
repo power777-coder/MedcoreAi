@@ -1,0 +1,187 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedCore AI | Secure Portal</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+<input type="hidden" id="csrfToken" value="{{ csrf_token }}">
+
+    <div class="global-bg-wrapper">
+        <div class="bg-overlay"></div>
+        
+        <section id="page1" class="content-overlay">
+            <nav class="top-nav">
+                <div class="logo">MEDCORE <span>AI</span></div>
+            </nav>
+            <div class="glass-panel main-card">
+                <div class="badge-new">VERSION 2.0</div>
+                <h1>Smart Disease Prediction System</h1>
+                <p>Advanced Neural Analysis for precision healthcare. Identify potential risks with 99.2% accuracy using our ML engine.</p>
+                <button class="btn-primary-glow" onclick="showPage('page2')">Get Started <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </section>
+
+        <section id="page2" class="content-overlay hidden">
+            <nav class="top-nav">
+                <div class="logo">MEDCORE <span>AI</span></div>
+                <button class="btn-back" onclick="showPage('page1')"><i class="fas fa-chevron-left"></i> Back</button>
+            </nav>
+            <div class="glass-panel main-card">
+                <h1>Sign In</h1>
+                <p>Authorized Medical Personnel Only</p>
+                <form onsubmit="handleSignIn(event)">
+                    <div class="floating-label-group">
+                        <input type="text" id="userNameInput" required placeholder=" ">
+                        <label for="userNameInput">Full Name</label>
+                    </div>
+                    <div class="floating-label-group">
+                        <input type="email" id="userEmailInput" required placeholder=" ">
+                        <label for="userEmailInput">Email Address</label>
+                    </div>
+                    <div class="floating-label-group">
+                        <input type="password" id="pass" required placeholder=" ">
+                        <label for="pass">Access Key</label>
+                    </div>
+                    <button type="submit" class="btn-primary-glow">Enter Portal</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="page3" class="content-overlay hidden">
+            <nav class="top-nav">
+                <div class="logo">MEDCORE <span>AI</span></div>
+                <button class="btn-back" onclick="showPage('page2')"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </nav>
+            <div class="glass-panel main-card">
+                <div class="profile-header">
+                    <img src="" id="userAvatar" class="user-avatar">
+                    <h1 id="displayName">---</h1>
+                    <p id="displayEmail" class="email-subtext">---</p>
+                </div>
+                
+                <div class="profile-options">
+                    <button class="option-row" onclick="loadHistory()">
+                         <i class="fas fa-history"></i> Patient Records
+                    </button>
+
+                    <button class="option-row"><i class="fas fa-sliders-h"></i> System Settings</button>
+                </div>
+
+                <div id="historyPanel" style="display:none; margin-top:20px;"></div>
+
+                <button class="btn-primary-glow" onclick="showPage('page4')">
+                    Launch Analyzer <i class="fas fa-microchip"></i>
+                </button>
+
+                
+
+            </div>
+        </section>
+
+        <section id="page4" class="content-overlay hidden">
+            <nav class="top-nav">
+                <div class="logo">MEDCORE <span>AI</span></div>
+                <button class="btn-back" onclick="showPage('page3')"><i class="fas fa-chevron-left"></i> Back</button>
+            </nav>
+            <div class="glass-panel main-card">
+                <h1>Symptom Input</h1>
+                <p>Select multiple indicators for neural scan.</p>
+                <input type="text" id="symptomSearch" placeholder="Search symptoms..." class="search-box">
+
+                <div class="symptom-selector" id="symptomContainer"></div>
+
+                <button class="btn-primary-glow" onclick="runAnalysis()">
+                    Run AI Prediction <i class="fas fa-search"></i>
+                </button>
+
+            </div>
+        </section>
+
+        <section id="page5" class="content-overlay hidden">
+    <nav class="top-nav">
+        <div class="logo">MEDCORE <span>AI</span></div>
+        <button class="btn-back" onclick="showPage('page4')">
+            <i class="fas fa-chevron-left"></i> Back
+        </button>
+    </nav>
+
+    <div class="glass-panel main-card result-card">
+
+    <h1 class="result-title">Prediction Result</h1>
+
+    <div class="result-disease">
+        <i class="fas fa-stethoscope"></i>
+        <span id="resultDisease"></span>
+    </div>
+
+    <div class="severity-badge" id="severityBadge">
+        <span id="resultSeverity"></span>
+    </div>
+
+    <hr class="result-divider">
+
+    <div class="result-section">
+        <h3><i class="fas fa-home-medical"></i> Household Remedy</h3>
+        <p id="resultRemedy"></p>
+    </div>
+
+    <div class="result-section">
+        <h3><i class="fas fa-user-doctor"></i> Doctor Advice</h3>
+        <p id="resultAdvice"></p>
+    </div>
+
+    <div class="result-actions">
+        <button class="btn-secondary" onclick="showPage('page4')">
+            New Scan
+        </button>
+
+        <button class="btn-primary-glow" onclick="showPage('page3')">
+            Dashboard
+        </button>
+    </div>
+
+</div>
+
+</section>
+
+    </div>
+
+    <div id="otpModal" class="otp-modal hidden">
+
+    <div class="otp-box">
+
+        <h2>Email Verification</h2>
+        <p>Enter OTP sent to your email</p>
+
+        <div class="otp-inputs">
+            <input maxlength="1" class="otp-digit">
+            <input maxlength="1" class="otp-digit">
+            <input maxlength="1" class="otp-digit">
+            <input maxlength="1" class="otp-digit">
+            <input maxlength="1" class="otp-digit">
+            <input maxlength="1" class="otp-digit">
+        </div>
+
+        <button onclick="verifyOTP()" class="btn-primary-glow">
+            Verify OTP
+        </button>
+
+        <p id="otpTimer">Resend OTP in 60s</p>
+        <button onclick="resendOTP()" id="resendBtn" disabled>
+            Resend OTP
+        </button>
+
+    </div>
+</div>
+
+       <script src="{% static 'js/script.js' %}"></script>
+
+
+</body>
+</html>
