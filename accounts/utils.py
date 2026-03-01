@@ -33,6 +33,7 @@ def send_otp_email(email, otp):
 
     except ApiException as e:
         print("\n===== BREVO ERROR =====")
-        print(e)
+        print("Status:", e.status)
+        print("Body:", e.body)
         print("=======================\n")
         return False

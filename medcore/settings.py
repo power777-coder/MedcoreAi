@@ -128,5 +128,4 @@ STATICFILES_DIRS = [
 
 
 BREVO_API_KEY = os.getenv("BREVO_API_KEY")
-
 LOGIN_URL = '/'
