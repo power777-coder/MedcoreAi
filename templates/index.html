@@ -8,9 +8,12 @@
     <title>MedCore AI | Secure Portal</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+         
 </head>
 <body>
 <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
+{{ firebase_config|json_script:"firebase-config" }}
 
     <div class="global-bg-wrapper">
         <div class="bg-overlay"></div>
@@ -27,36 +30,59 @@
             </div>
         </section>
 
-        <section id="page2" class="content-overlay hidden">
-            <nav class="top-nav">
-                <div class="logo">MEDCORE <span>AI</span></div>
-                <button class="btn-back" onclick="showPage('page1')"><i class="fas fa-chevron-left"></i> Back</button>
-            </nav>
-            <div class="glass-panel main-card">
-                <h1>Sign In</h1>
-                <p>Authorized Medical Personnel Only</p>
-                <form onsubmit="handleSignIn(event)">
-                    <div class="floating-label-group">
-                        <input type="text" id="userNameInput" required placeholder=" ">
-                        <label for="userNameInput">Full Name</label>
-                    </div>
-                    <div class="floating-label-group">
-                        <input type="email" id="userEmailInput" required placeholder=" ">
-                        <label for="userEmailInput">Email Address</label>
-                    </div>
-                    <div class="floating-label-group">
-                        <input type="password" id="pass" required placeholder=" ">
-                        <label for="pass">Access Key</label>
-                    </div>
-                    <button type="submit" class="btn-primary-glow">Enter Portal</button>
-                </form>
+       <section id="page2" class="content-overlay hidden">
+    <nav class="top-nav">
+        <div class="logo">MEDCORE <span>AI</span></div>
+        <button class="btn-back" onclick="showPage('page1')">
+            <i class="fas fa-chevron-left"></i> Back
+        </button>
+    </nav>
+
+    <div class="glass-panel main-card">
+        <h1>Sign In</h1>
+        <p>Authorized Medical Personnel Only</p>
+
+        <!-- 🔵 Email Login Form -->
+        <form onsubmit="handleSignIn(event)">
+            <div class="floating-label-group">
+                <input type="text" id="userNameInput" required placeholder=" ">
+                <label for="userNameInput">Full Name</label>
             </div>
-        </section>
+
+            <div class="floating-label-group">
+                <input type="email" id="userEmailInput" required placeholder=" ">
+                <label for="userEmailInput">Email Address</label>
+            </div>
+
+            <div class="floating-label-group">
+                <input type="password" id="pass" required placeholder=" ">
+                <label for="pass">Access Key</label>
+            </div>
+
+            <button type="submit" class="btn-primary-glow">
+                Enter Portal
+            </button>
+        </form>
+
+        <!-- 🔵 Divider -->
+        <div style="display:flex; align-items:center; margin:25px 0; opacity:0.4;">
+            <div style="flex:1; height:1px; background:#fff;"></div>
+            <span style="margin:0 15px; font-size:14px;">OR</span>
+            <div style="flex:1; height:1px; background:#fff;"></div>
+        </div>
+
+        <!-- 🔵 Google Login Button -->
+        <button type="button" id="googleLoginBtn" onclick="googleLogin()" class="btn-primary-glow">
+    <i class="fab fa-google"></i> Continue with Google
+</button>
+
+    </div>
+</section>
 
         <section id="page3" class="content-overlay hidden">
             <nav class="top-nav">
                 <div class="logo">MEDCORE <span>AI</span></div>
-                <button class="btn-back" onclick="showPage('page2')"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                <button class="btn-back" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </nav>
             <div class="glass-panel main-card">
                 <div class="profile-header">
@@ -84,14 +110,14 @@
             </div>
         </section>
 
-        <section id="page4" class="content-overlay hidden">
+        <section id="page4" class="content-overlay analyzer-page hidden">
             <nav class="top-nav">
                 <div class="logo">MEDCORE <span>AI</span></div>
                 <button class="btn-back" onclick="showPage('page3')"><i class="fas fa-chevron-left"></i> Back</button>
             </nav>
             <div class="glass-panel main-card">
                 <h1>Symptom Input</h1>
-                <p>Select multiple indicators for neural scan.</p>
+                <p>Select symptoms or describe the problem in plain language for chatbot prediction.</p>
                 <input type="text" id="symptomSearch" placeholder="Search symptoms..." class="search-box">
 
                 <div class="symptom-selector" id="symptomContainer"></div>
@@ -100,10 +126,46 @@
                     Run AI Prediction <i class="fas fa-search"></i>
                 </button>
 
+                <div style="margin:18px 0; text-align:center; opacity:0.6;">OR</div>
+
+                <textarea
+                    id="chatbotInput"
+                    class="search-box"
+                    rows="4"
+                    placeholder="Describe symptoms or type a disease name. Example: I have fever, cough, chest pain, and fatigue."
+                    style="width:100%; resize:vertical; min-height:110px;"
+                ></textarea>
+
+                <div class="advisor-tools">
+                    <button type="button" id="voiceInputBtn" class="btn-secondary advisor-tool-btn" onclick="toggleVoiceTyping()">
+                        <i class="fas fa-microphone"></i> Start Voice Typing
+                    </button>
+
+                    <label for="chatbotImageInput" class="btn-secondary advisor-tool-btn advisor-upload-label">
+                        <i class="fas fa-image"></i> Add Disease Image
+                    </label>
+                    <input
+                        type="file"
+                        id="chatbotImageInput"
+                        accept="image/*"
+                        onchange="handleChatbotImageUpload(event)"
+                        hidden
+                    >
+                </div>
+
+                <p id="voiceStatus" class="advisor-status"></p>
+                <p id="imageStatus" class="advisor-status"></p>
+                <img id="chatbotImagePreview" class="advisor-image-preview hidden" alt="Uploaded disease preview">
+                <div class="advisor-actions">
+                    <button class="btn-primary-glow advisor-run-btn" onclick="runChatbotPrediction()">
+                        Ask Medical Chatbot <i class="fas fa-comments"></i>
+                    </button>
+                </div>
+
             </div>
         </section>
 
-        <section id="page5" class="content-overlay hidden">
+        <section id="page5" class="content-overlay analyzer-page hidden">
     <nav class="top-nav">
         <div class="logo">MEDCORE <span>AI</span></div>
         <button class="btn-back" onclick="showPage('page4')">
@@ -124,6 +186,9 @@
         <span id="resultSeverity"></span>
     </div>
 
+    <p id="resultMatchedSymptoms" style="margin-top:12px; opacity:0.85;"></p>
+    <p id="resultWarning" style="margin-top:10px; color:#ffb3b3; font-weight:600;"></p>
+
     <hr class="result-divider">
 
     <div class="result-section">
@@ -134,6 +199,14 @@
     <div class="result-section">
         <h3><i class="fas fa-user-doctor"></i> Doctor Advice</h3>
         <p id="resultAdvice"></p>
+    </div>
+
+    <div id="doctorSuggestionPanel" class="result-section hidden">
+        <h3><i class="fas fa-video"></i> Suggested Next Step</h3>
+        <p id="doctorSuggestionText"></p>
+        <button class="btn-primary-glow" onclick="openDoctorConnectFromResult()">
+            Connect With Doctor
+        </button>
     </div>
 
     <div class="result-actions">
@@ -180,8 +253,150 @@
     </div>
 </div>
 
-       <script src="{% static 'js/script.js' %}"></script>
+<div id="doctorConnectModal" class="doctor-modal hidden">
+    <div class="doctor-modal-card">
+        <div class="doctor-modal-header">
+            <div>
+                <h2>Doctor Connect</h2>
+                <p>Unlock a doctor consultation and choose Google Meet or video call.</p>
+            </div>
+            <button type="button" class="btn-back doctor-modal-close" onclick="closeDoctorConnectModal()">
+                <i class="fas fa-times"></i> Back to Prediction
+            </button>
+        </div>
 
+        <div class="doctor-premium-panel">
+            <div class="doctor-premium-header">
+                <div>
+                    <h2>Consultation Plans</h2>
+                    <p>Select a premium plan to continue.</p>
+                </div>
+                <div class="doctor-premium-actions">
+                    <span class="doctor-price-tag">From Rs. 500</span>
+                </div>
+            </div>
+
+            <div id="doctorPlanStatus" class="doctor-status-card">
+                Login required to load doctor plans.
+            </div>
+
+            <div id="doctorBookingMessage" class="doctor-booking-message hidden"></div>
+
+            <div id="doctorPlanList" class="doctor-plan-list"></div>
+
+            <form id="doctorConsultForm" class="doctor-booking-form" onsubmit="bookDoctorConsultation(event)">
+                <h3>Book Consultation Window</h3>
+
+                <div class="floating-label-group">
+                    <input type="text" id="doctorPatientName" required placeholder=" ">
+                    <label for="doctorPatientName">Patient Name</label>
+                </div>
+
+                <div class="floating-label-group">
+                    <input type="email" id="doctorContactEmail" required placeholder=" ">
+                    <label for="doctorContactEmail">Contact Email</label>
+                </div>
+
+                <div class="floating-label-group">
+                    <input type="date" id="doctorPreferredDate" placeholder=" ">
+                    <label for="doctorPreferredDate">Preferred Date</label>
+                </div>
+
+                <div class="floating-label-group">
+                    <select id="doctorConsultMode" class="consult-select">
+                        <option value="google_meet">Google Meet With Doctor</option>
+                        <option value="video_call">Video Call With Doctor</option>
+                    </select>
+                </div>
+
+                <div class="floating-label-group">
+                    <textarea id="doctorSymptomsSummary" rows="4" required placeholder=" "></textarea>
+                    <label for="doctorSymptomsSummary">Symptoms / Reason for consultation</label>
+                </div>
+
+                <button type="submit" class="btn-primary-glow">Confirm Consultation</button>
+            </form>
+
+            <div id="doctorConsultationList" class="doctor-consultation-list"></div>
+        </div>
+    </div>
+</div>
+       <!-- Firebase App (core) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+
+<!-- Firebase Auth -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
+<!-- Main script to load FIRST -->
+<script src="{% static 'js/script.js' %}"></script>
+
+<!-- Firebase Initialization AFTER script.js -->
+<script>
+  let auth;
+  let firebaseReady = false;
+
+  const firebaseConfig = JSON.parse(
+    document.getElementById("firebase-config").textContent
+  );
+
+  try {
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    firebaseReady = true;
+
+    auth.getRedirectResult()
+      .then((result) => {
+        if (result?.user) {
+          handleGoogleLoginSuccess(result.user);
+        }
+      })
+      .catch((error) => {
+        console.error("getRedirectResult error:", error.code, error.message);
+      });
+
+    auth.onAuthStateChanged(function(user) {
+      if (user && !window.loggingIn) {
+        handleGoogleLoginSuccess(user);
+      }
+    });
+  } catch (e) {
+    console.error("Firebase initialization error:", e);
+  }
+
+  function handleGoogleLoginSuccess(user) {
+    window.loggingIn = true;
+
+    const payload = {
+      name: user.displayName || user.email,
+      email: user.email
+    };
+
+    fetch("/accounts/firebase-login/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": document.getElementById("csrfToken").value
+      },
+      body: JSON.stringify(payload)
+    })
+      .then(res => res.json())
+      .then(data => {
+        window.loggingIn = false;
+
+        if (data.success) {
+          showPage("page3");
+          loadUserProfile();
+        } else {
+          alert("Login failed: " + (data.message || "Unknown error"));
+        }
+      })
+      .catch(err => {
+        window.loggingIn = false;
+        console.error("Backend request error:", err);
+        alert("Error communicating with server:\n" + err.message);
+      });
+  }
+</script>
 
 </body>
 </html>

@@ -21,6 +21,16 @@
     align-items: center; justify-content: center;
 }
 
+.analyzer-page {
+    justify-content: flex-start;
+    overflow-y: auto;
+    padding: 88px 0 24px;
+}
+
+.analyzer-page .glass-panel {
+    margin: 0 auto 24px;
+}
+
 .glass-panel {
     background: var(--glass-bg); backdrop-filter: blur(15px);
     border: 1px solid rgba(255,255,255,0.1); padding: 40px 50px;
@@ -44,10 +54,18 @@
     width: 100%; padding: 14px 20px; background: #222; border: none;
     border-radius: 5px; color: white; font-size: 0.95rem; outline: none;
 }
+.floating-label-group textarea,
+.floating-label-group select {
+    width: 100%; padding: 14px 20px; background: #222; border: none;
+    border-radius: 5px; color: white; font-size: 0.95rem; outline: none;
+}
 .floating-label-group label {
     position: absolute; left: 20px; top: 14px; color: #777; transition: 0.2s; pointer-events: none;
 }
-.floating-label-group input:focus ~ label, .floating-label-group input:not(:placeholder-shown) ~ label {
+.floating-label-group input:focus ~ label,
+.floating-label-group input:not(:placeholder-shown) ~ label,
+.floating-label-group textarea:focus ~ label,
+.floating-label-group textarea:not(:placeholder-shown) ~ label {
     top: 3px; font-size: 0.7rem; color: var(--accent);
 }
 
@@ -88,12 +106,287 @@
     color: white;
 }
 
+.advisor-tools {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+.advisor-tool-btn,
+.advisor-upload-label {
+    width: 100%;
+    margin-top: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.advisor-upload-label {
+    min-height: 48px;
+}
+
+.advisor-status {
+    text-align: left;
+    margin: 10px 0 0;
+    min-height: 18px;
+    font-size: 0.85rem;
+    color: #d2edf2;
+}
+
+.advisor-image-preview {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.15);
+    margin-top: 14px;
+}
+
+.advisor-actions {
+    margin-top: 12px;
+}
+
+.advisor-run-btn {
+    margin-top: 0;
+}
+
 
 #historyPanel {
     color: white;
     max-height: 280px;
     overflow-y: auto;
     padding: 10px;
+}
+
+.doctor-modal {
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.72) 100%),
+        url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1920&q=80');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+    padding: 24px;
+}
+
+.doctor-modal-card {
+    width: min(720px, 100%);
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    background: rgba(8, 8, 8, 0.96);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+}
+
+.doctor-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.doctor-modal-header h2 {
+    color: white;
+    margin-bottom: 6px;
+}
+
+.doctor-modal-header p,
+.doctor-premium-header p {
+    color: #d8d8d8;
+}
+
+.doctor-modal-close {
+    color: white;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px;
+    padding: 10px 14px;
+}
+
+.doctor-premium-panel {
+    margin-top: 0;
+    text-align: left;
+}
+
+.doctor-premium-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.doctor-premium-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.doctor-premium-header h2 {
+    color: white;
+    margin-bottom: 6px;
+}
+
+.doctor-price-tag {
+    background: rgba(0, 210, 255, 0.15);
+    border: 1px solid rgba(0, 210, 255, 0.35);
+    color: var(--accent);
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.doctor-status-card,
+.doctor-plan-card,
+.doctor-consultation-card {
+    background: rgba(24,24,24,0.98);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 16px;
+    color: white;
+}
+
+.doctor-booking-message {
+    margin-top: 14px;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(24,24,24,0.98);
+    color: white;
+}
+
+.doctor-booking-message p {
+    margin: 10px 0 0;
+}
+
+.doctor-booking-message-success {
+    border-color: rgba(31, 209, 133, 0.35);
+    background: rgba(31, 209, 133, 0.12);
+}
+
+.doctor-booking-message-error {
+    border-color: rgba(255, 102, 102, 0.35);
+    background: rgba(255, 102, 102, 0.12);
+}
+
+.doctor-booking-message-info {
+    border-color: rgba(0, 210, 255, 0.35);
+    background: rgba(0, 210, 255, 0.12);
+}
+
+.doctor-booking-message-top,
+.doctor-booking-link-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.doctor-booking-link-row {
+    margin-top: 14px;
+}
+
+.doctor-message-close {
+    color: white;
+}
+
+.doctor-link-input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(14,14,14,1);
+    color: white;
+}
+
+.doctor-copy-btn {
+    width: auto;
+    margin-top: 0;
+    padding: 12px 18px;
+}
+
+.doctor-plan-list,
+.doctor-consultation-list {
+    display: grid;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.doctor-plan-card h3,
+.doctor-booking-form h3 {
+    margin-bottom: 6px;
+    color: white;
+}
+
+.doctor-plan-card p,
+.doctor-plan-card span,
+.doctor-consultation-card p,
+.doctor-consultation-card small {
+    margin: 0;
+    color: #ececec;
+}
+
+.doctor-plan-card p,
+.doctor-consultation-card small,
+#doctorPlanStatus,
+.doctor-booking-message p {
+    color: #d4d4d4;
+}
+
+.doctor-booking-form h3,
+.doctor-premium-header h2,
+.doctor-plan-card h3,
+.doctor-consultation-card strong,
+#doctorPlanStatus strong {
+    color: #ffffff;
+}
+
+.doctor-plan-footer,
+.doctor-consultation-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.doctor-plan-btn {
+    width: auto;
+    margin-top: 0;
+    padding: 12px 18px;
+}
+
+.doctor-booking-form {
+    margin-top: 18px;
+}
+
+.doctor-meet-link {
+    display: inline-block;
+    margin-top: 12px;
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.doctor-empty-state {
+    margin-top: 14px;
+    color: #d0d0d0;
+}
+
+.consult-select {
+    appearance: none;
 }
 
 .result-card {
@@ -223,4 +516,45 @@
 
 #resendBtn {
     color: white;
+}
+
+
+a.btn-primary-glow {
+    cursor: pointer;
+}
+
+@media (max-width: 640px) {
+    .glass-panel {
+        width: calc(100% - 32px);
+        padding: 28px 22px;
+        max-height: calc(100vh - 96px);
+        overflow-y: auto;
+    }
+
+    .analyzer-page {
+        padding: 76px 0 20px;
+    }
+
+    .analyzer-page .glass-panel {
+        max-height: none;
+        overflow: visible;
+    }
+
+    .advisor-tools,
+    .result-actions,
+    .symptom-selector {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+    }
+
+    .doctor-premium-header,
+    .doctor-modal-header,
+    .doctor-premium-actions,
+    .doctor-booking-message-top,
+    .doctor-booking-link-row,
+    .doctor-plan-footer,
+    .doctor-consultation-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
